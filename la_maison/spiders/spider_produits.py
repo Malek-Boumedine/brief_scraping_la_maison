@@ -58,4 +58,3 @@ class ProduitsSpider(scrapy.Spider):
             code_article = code_article,
             gencod = gencod,
             url_produit = response.meta["url_produit"])
-            

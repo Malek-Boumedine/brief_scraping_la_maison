@@ -10,7 +10,6 @@ class CategoriesSpider(scrapy.Spider):
         titre = response.xpath("//title/text()").get()
         categories = response.css('li.level1')
 
-        resultat = {"titre" : titre, "categories" : []}
         for cat in categories :
             dict_cat = {
                 "nom_cat" : cat.css('a span::text').get(),
@@ -25,19 +24,19 @@ class CategoriesSpider(scrapy.Spider):
                     "nom_ss_cat" : s_cat.css('a span::text').get(),
                     "url_ss_cat" : s_cat.css('a::attr(href)').get(),
                     "id_ss_cat" : s_cat.css('::attr(id)').get(),
-                    "sous_menus" : []
+                    "sous_sous_categories" : []
                 }
                 dict_cat["sous_categories"].append(dict_ss_cat)
 
-                sous_menus = s_cat.css('li.level3')
-                for s_menu in sous_menus :
-                    dict_sous_menu = {
-                        "nom_ss_menu" : s_menu.css('a span::text').get(),
-                        "url_ss_menu" : s_menu.css('a::attr(href)').get(),
-                        "id_ss_menu" : s_menu.css('::attr(id)').get(),
+                sous_sous_categories = s_cat.css('li.level3')
+                for s_menu in sous_sous_categories :
+                    dict_sous_sous_categorie = {
+                        "nom_sous_sous_categorie" : s_menu.css('a span::text').get(),
+                        "url" : s_menu.css('a::attr(href)').get(),
+                        "sous_categorie" : s_cat.css('a span::text').get(),
+                        "categorie" : cat.css('a span::text').get(),
                     }
-                    dict_ss_cat["sous_menus"].append(dict_sous_menu)
-            resultat["categories"].append(dict_cat)
-        yield resultat
+                    dict_ss_cat["sous_sous_categories"].append(dict_sous_sous_categorie)
+                    yield dict_sous_sous_categorie
 
 

@@ -17,12 +17,23 @@ class ProduitsSpider(scrapy.Spider):
         liste_produits = response.css('ol.products.list')
         produits = liste_produits.css('li.item.product')
         
-        for p in produits : 
-            nom_produit = p.css('div div strong a::text').get()
-            marque_produit = p.css('div div div.brand a::text').get()
-            prix_produit = p.css('div div div.product-item-details-wrapper div span span span::text').get()
-            url_produit = p.css('div a::attr(href)').get()
-            yield ProductItem(Nom=nom_produit, Marque=marque_produit, Prix=prix_produit, url=url_produit)
+        for p in produits :
+            if p.css('div div strong a::text').get() :  
+                nom_produit = p.css('div div strong a::text').get()
+                marque_produit = p.css('div div div.brand a::text').get()
+                prix_produit = p.css('div div div.product-item-details-wrapper div span span span::text').get()
+                url_produit = p.css('div a::attr(href)').get()
+                folow_produit = response.follow(url_produit, callback=self.parse_page_product)
+                yield ProductItem(Nom=nom_produit, Marque=marque_produit, Prix=prix_produit, url=url_produit)
+        
+        bouton_suivant = response.css('a.action.next::attr(href)').get()
+        if bouton_suivant : 
+            page_suivante = response.urljoin(bouton_suivant)
+            yield scrapy.Request(url = page_suivante, callback=self.parse_product)
+            
+        
     def parse_page_product(self, response):
+        page_produit = response.css('.columns .column.main')
+        reference_produit = page_produit.css('div.product-view-top')
         pass
             

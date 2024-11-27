@@ -1,5 +1,10 @@
 import scrapy
 from items import ProductItem
+import json
+JSON_CATEGORIES = None
+with open('categories.json', 'r') as f:
+    # Comment: pyfile.txt
+    JSON_CATEGORIES = json.load(f)
 
 class ProduitsSpider(scrapy.Spider):
     name = "spider_produits"

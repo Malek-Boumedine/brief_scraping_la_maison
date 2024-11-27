@@ -12,7 +12,12 @@ class LaMaisonItem(scrapy.Item):
     pass
 
 class ProductItem(scrapy.Item):
-    Nom = scrapy.Field()
-    Marque = scrapy.Field()
-    Prix = scrapy.Field()
-    url = scrapy.Field()
+    
+    nom_produit = scrapy.Field()
+    marque_produit = scrapy.Field()
+    prix_produit = scrapy.Field()
+    reference = scrapy.Field()
+    code_article = scrapy.Field()
+    gencod = scrapy.Field()
+    url_produit = scrapy.Field()
+

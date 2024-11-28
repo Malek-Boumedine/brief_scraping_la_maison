@@ -5,3 +5,4 @@ la_maison/produits.*
 la_maison/spiders/categories.*
 */__pycache__/
 */*/__pycache__/
+.venv/

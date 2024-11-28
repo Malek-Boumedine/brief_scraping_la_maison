@@ -1,4 +1,6 @@
 import scrapy
+from la_maison.items import categorieItem
+
 
 
 class CategoriesSpider(scrapy.Spider):
@@ -7,7 +9,6 @@ class CategoriesSpider(scrapy.Spider):
     start_urls = ["https://www.lamaison.fr/"]
 
     def parse(self, response):
-        titre = response.xpath("//title/text()").get()
         categories = response.css('li.level1')
 
         for cat in categories :
@@ -38,5 +39,6 @@ class CategoriesSpider(scrapy.Spider):
                     }
                     dict_ss_cat["sous_sous_categories"].append(dict_sous_sous_categorie)
                     yield dict_sous_sous_categorie
+                    
 
 

@@ -1834,5 +1834,29 @@
     "url": "https://www.lamaison.fr/accessoires-auto-et-velo/velo/accessoire-du-cycliste.html",
     "sous_categorie": "Vélo",
     "categorie": "Accessoires Auto et vélo"
+},
+{
+    "nom_sous_sous_categorie": "Idées cadeaux",
+    "url": "https://www.lamaison.fr/chalet/selection-cadeaux/idees-cadeaux-3.html",
+    "sous_categorie": "Sélection cadeaux",
+    "categorie": "Chalet"
+},
+{
+    "nom_sous_sous_categorie": "Culinaire",
+    "url": "https://www.lamaison.fr/chalet/selection-cadeaux/culinaire-3.html",
+    "sous_categorie": "Sélection cadeaux",
+    "categorie": "Chalet"
+},
+{
+    "nom_sous_sous_categorie": "Electroportatif",
+    "url": "https://www.lamaison.fr/chalet/selection-cadeaux/electroportatif-3.html",
+    "sous_categorie": "Sélection cadeaux",
+    "categorie": "Chalet"
+},
+{
+    "nom_sous_sous_categorie": "Jouets",
+    "url": "https://www.lamaison.fr/chalet/selection-cadeaux/jouets-3.html",
+    "sous_categorie": "Sélection cadeaux",
+    "categorie": "Chalet"
 }
 ]

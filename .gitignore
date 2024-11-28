@@ -6,5 +6,3 @@ la_maison/spiders/categories.*
 # Ignorer tous les dossiers __pycache__, quelle que soit leur profondeur
 **/__pycache__/
 
-# Ignorer l'environnement virtuel
-.venv/

@@ -1,8 +1,10 @@
-la_maison/spiders/__pycache__
-la_maison/__pycache__
+# Ignorer les fichiers spécifiques
 la_maison/spiders/spider_produitsTESTTT.py
 la_maison/produits.*
 la_maison/spiders/categories.*
-*/__pycache__/
-*/*/__pycache__/
+
+# Ignorer tous les dossiers __pycache__, quelle que soit leur profondeur
+**/__pycache__/
+
+# Ignorer l'environnement virtuel
 .venv/

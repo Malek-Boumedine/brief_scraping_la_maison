@@ -2,7 +2,7 @@ import os
 from scrapy.cmdline import execute
 
 spider = "spider_categories"
-nom = "categories"
+fichier_sortie = "categories"
 
 # log_directory = f"logs/scraping/{spider}"
 
@@ -27,7 +27,7 @@ try:
         'crawl',
         spider,
         '-o',
-        f'{nom}.json'
+        f'{fichier_sortie}.csv'
         # '-s',
         # f'LOG_FILE={log_file}'
     ])

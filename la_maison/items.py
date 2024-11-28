@@ -16,6 +16,8 @@ class ProductItem(scrapy.Item):
     nom_produit =scrapy.Field()
     marque_produit =scrapy.Field()
     prix_produit =scrapy.Field()
+    en_promotion =scrapy.Field()
+    date_fin_promo=scrapy.Field()
     categorie =scrapy.Field()
     sous_categorie =scrapy.Field()
     sous_sous_categorie =scrapy.Field()

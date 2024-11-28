@@ -1,6 +1,7 @@
 import scrapy
 from la_maison.items import ProductItem
 import json
+import re
 
 class ProduitsSpider(scrapy.Spider):
     name = "spider_produits"
@@ -10,6 +11,8 @@ class ProduitsSpider(scrapy.Spider):
             'nom_produit',
             'marque_produit',
             'prix_produit',
+            "en_promotion",
+            'date_fin_promo',
             'categorie',
             'sous_categorie',
             'sous_sous_categorie',
@@ -66,23 +69,56 @@ class ProduitsSpider(scrapy.Spider):
         description = response.css('div.product-info-short-description::text').get()
         
         attributs_produit = response.css('div.product.attribute div::text').get()
-        liste_attributs = attributs_produit.split()
-        reference = liste_attributs[2]
-        code_article = liste_attributs[-1]
-        
+        if attributs_produit : 
+            regex_reference = r"Référence\s*:\s*(\S+)"
+            match_reference = re.search(regex_reference, attributs_produit)
+            reference = match_reference.group(1) if match_reference else None
+            
+            regex_code_article = r"Code article\s*:\s*(\S+)"
+            match_code_article = re.search(regex_code_article, attributs_produit)
+            code_article = match_code_article.group(1) if match_code_article else None
+        else : 
+            reference = "null"
+            code_article = "null"
         code_gen = response.xpath('.//dd[@data-th="Gencod"]/text()').get()
         gencod = code_gen.split("|")[0] if code_gen else "Null"
         marque = response.css('div.manufacturer a::attr(title)').get()
         marque_produit = marque if marque else "Null"
-
+        
+        categorie_meta = response.meta["categorie"]
+        sous_categorie_meta = response.meta["sous_categorie"]
+        sous_sous_categorie_meta = response.meta["sous_sous_categorie"]
+        liste_cats = response.css('ul.items li')
+        product_promo = response.css('div.product-info-price div.price-box.price-final_price div span.offer-validity::text').get()
+        regex = r"\d{2}/\d{2}/\d{4}"
+        date_fin_promo = re.search(regex, product_promo).group() if product_promo else None
+        
+        if categorie_meta : 
+            categorie = categorie_meta
+        else :
+            categorie = liste_cats[1].css('a::attr(title)').get()
+            
+        if sous_categorie_meta : 
+           sous_categorie = sous_categorie_meta
+        else : 
+            sous_categorie = liste_cats[2].css('a::attr(title)').get()
+           
+        if sous_sous_categorie_meta : 
+            sous_sous_categorie = sous_sous_categorie_meta
+        else : 
+            sous_sous_categorie = liste_cats[3].css('a::attr(title)').get()
+            
         yield ProductItem(
             id_produit = id_produit,
             nom_produit = nom_produit,
             marque_produit = marque_produit,
             prix_produit = prix_produit,
-            categorie = response.meta["categorie"],
-            sous_categorie = response.meta["sous_categorie"],
-            sous_sous_categorie = response.meta["sous_sous_categorie"],
+            en_promotion = "Oui"if product_promo else "Non",
+            date_fin_promo = date_fin_promo,
+            categorie = categorie,
+            sous_categorie = sous_categorie,
+            sous_sous_categorie = sous_sous_categorie,
+            
             description = description,
             reference = reference,
             code_article = code_article,

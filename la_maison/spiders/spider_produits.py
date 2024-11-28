@@ -1,6 +1,6 @@
 import scrapy
-from la_maison.items import ProductItem
-import json
+from items import ProductItem
+import csv
 import re
 
 class ProduitsSpider(scrapy.Spider):
@@ -16,7 +16,6 @@ class ProduitsSpider(scrapy.Spider):
             'categorie',
             'sous_categorie',
             'sous_sous_categorie',
-            'description',
             'reference',
             'code_article',
             'gencod',
@@ -25,19 +24,14 @@ class ProduitsSpider(scrapy.Spider):
     }
     
     def start_requests(self):
-        with open("categories.json", "r") as fichier : 
-            self.donnees = json.load(fichier)
-            
-        for objet in self.donnees:
-            yield scrapy.Request(
-                url=objet["url"],
-                callback=self.parse_product,
-                meta={
-                    "categorie" : objet["categorie"],
-                    "sous_categorie" : objet["sous_categorie"],
-                    "sous_sous_categorie" : objet["nom_sous_sous_categorie"]
-                }
-            )
+        
+        with open("categories.csv", newline="") as fichier:
+            donnees = csv.DictReader(fichier, delimiter=",")
+            for objet in donnees:
+                print(objet["url"])
+                if objet : 
+                    yield scrapy.Request(url=objet["url"],callback=self.parse_product)
+
 
     def parse_product(self, response):
         liste_produits = response.css('ol.products.list')
@@ -46,27 +40,18 @@ class ProduitsSpider(scrapy.Spider):
         for p in produits : 
             if p.css('div div strong a::text').get():
                 url_produit = p.css('div a::attr(href)').get()
-
-                yield response.follow(url_produit, callback=self.parse_page_produit, meta={
-                    "url_produit" : url_produit,
-                    "categorie" : response.meta["categorie"],
-                    "sous_categorie" : response.meta["sous_categorie"],
-                    "sous_sous_categorie" : response.meta["sous_sous_categorie"],
-                })
+                yield response.follow(url_produit, callback=self.parse_page_produit, meta={"url_produit" : url_produit,})
                 
         bouton_suivant = response.css('a.action.next::attr(href)').get()
         if bouton_suivant :
             url_suivante = response.urljoin(bouton_suivant)
-            yield scrapy.Request(
-                url = url_suivante, 
-                callback = self.parse_product,
-                meta = response.meta)
+            yield scrapy.Request(url = url_suivante, callback = self.parse_product, meta = response.meta)
+
         
     def parse_page_produit(self, response):
         nom_produit = response.css('h1.page-title span::text').get()
         prix_produit = response.css('div.product-info-price div span span::attr(data-price-amount)').get()
         id_produit = response.css('div.product-info-price div::attr(data-product-id)').get()
-        description = response.css('div.product-info-short-description::text').get()
         
         attributs_produit = response.css('div.product.attribute div::text').get()
         if attributs_produit : 
@@ -85,28 +70,14 @@ class ProduitsSpider(scrapy.Spider):
         marque = response.css('div.manufacturer a::attr(title)').get()
         marque_produit = marque if marque else "Null"
         
-        categorie_meta = response.meta["categorie"]
-        sous_categorie_meta = response.meta["sous_categorie"]
-        sous_sous_categorie_meta = response.meta["sous_sous_categorie"]
         liste_cats = response.css('ul.items li')
         product_promo = response.css('div.product-info-price div.price-box.price-final_price div span.offer-validity::text').get()
         regex = r"\d{2}/\d{2}/\d{4}"
         date_fin_promo = re.search(regex, product_promo).group() if product_promo else None
         
-        if categorie_meta : 
-            categorie = categorie_meta
-        else :
-            categorie = liste_cats[1].css('a::attr(title)').get()
-            
-        if sous_categorie_meta : 
-           sous_categorie = sous_categorie_meta
-        else : 
-            sous_categorie = liste_cats[2].css('a::attr(title)').get()
-           
-        if sous_sous_categorie_meta : 
-            sous_sous_categorie = sous_sous_categorie_meta
-        else : 
-            sous_sous_categorie = liste_cats[3].css('a::attr(title)').get()
+        categorie = liste_cats[1].css('a::attr(title)').get()
+        sous_categorie = liste_cats[2].css('a::attr(title)').get()
+        sous_sous_categorie = liste_cats[3].css('a::attr(title)').get()
             
         yield ProductItem(
             id_produit = id_produit,
@@ -118,8 +89,6 @@ class ProduitsSpider(scrapy.Spider):
             categorie = categorie,
             sous_categorie = sous_categorie,
             sous_sous_categorie = sous_sous_categorie,
-            
-            description = description,
             reference = reference,
             code_article = code_article,
             gencod = gencod,

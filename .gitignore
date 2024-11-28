@@ -3,5 +3,4 @@ la_maison/__pycache__
 la_maison/spiders/spider_produitsTESTTT.py
 la_maison/produits.*
 la_maison/spiders/categories.*
-*/__pycache__
-*/*/__pycache__
+

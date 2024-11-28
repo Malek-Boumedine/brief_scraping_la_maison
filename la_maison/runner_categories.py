@@ -1,7 +1,8 @@
 import os
 from scrapy.cmdline import execute
 
-spider = "la_maison"
+spider = "spider_categories"
+fichier_sortie = "categories"
 
 # log_directory = f"logs/scraping/{spider}"
 
@@ -26,7 +27,7 @@ try:
         'crawl',
         spider,
         '-o',
-        f'{spider}.csv'
+        f'{fichier_sortie}.csv'
         # '-s',
         # f'LOG_FILE={log_file}'
     ])

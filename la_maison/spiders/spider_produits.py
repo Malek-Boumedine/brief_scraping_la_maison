@@ -26,12 +26,10 @@ class ProduitsSpider(scrapy.Spider):
     def start_requests(self):
         
         with open("categories.csv", newline="") as fichier:
-            donnees = csv.DictReader(fichier, delimiter=",")
-            for objet in donnees:
-                print(objet["url"])
-                if objet : 
-                    yield scrapy.Request(url=objet["url"],callback=self.parse_product)
-
+            donnees_categories = csv.DictReader(fichier, delimiter=",")
+            for ligne in donnees_categories :
+                if ligne["type_cat"] == "PAGE_LIST" :
+                    yield scrapy.Request(url=ligne["url"],callback=self.parse_product)
 
     def parse_product(self, response):
         liste_produits = response.css('ol.products.list')

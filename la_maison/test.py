@@ -1,4 +1,3 @@
-import csv
 def search_id_produit():
     with open("produits.csv", newline="") as fichier:
         donnees = csv.DictReader(fichier, delimiter=",")  

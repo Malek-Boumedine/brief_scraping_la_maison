@@ -63,9 +63,10 @@ ROBOTSTXT_OBEY = True
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    "la_maison.pipelines.LaMaisonPipeline": 300,
-#}
+# Number  in  pipeline == Priority (priority number inferior)
+ITEM_PIPELINES = {
+   "la_maison.pipelines.LaMaisonPipeline": 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -92,3 +93,4 @@ ROBOTSTXT_OBEY = True
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
 FEED_EXPORT_INDENT = 4
+

@@ -23,6 +23,8 @@ class ProductItem(scrapy.Item):
 
 
 class categorieItem(scrapy.Item):
+    identifiant = scrapy.Field()
     nom_categorie = scrapy.Field()
+    type_cat = scrapy.Field()
     url = scrapy.Field()
-    page_list = scrapy.Field()
+    id_parent = scrapy.Field()

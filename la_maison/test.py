@@ -1,5 +1,4 @@
-import csv
+cate = ["salut", "momo", "toto"]
 
-with open("categories.csv", newline="") as fichier:
-    donnees = csv.DictReader(fichier, delimiter=",")  
-    urls = [row["url"] for row in donnees]  
+for i,cat in enumerate(cate) : 
+    print(f"{i+1} : {cat}")

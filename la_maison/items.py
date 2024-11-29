@@ -28,3 +28,5 @@ class categorieItem(scrapy.Item):
     type_cat = scrapy.Field()
     url = scrapy.Field()
     id_parent = scrapy.Field()
+
+

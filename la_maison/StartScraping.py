@@ -36,13 +36,16 @@ def start_scraping():
 
     # Lancer le processus en arrière-plan
     st.write("Exécution de runner_categories.py en arrière-plan...")
-    process = execute_command_background(["python3", "runner_categories.py"])
-    if process:
-        st.session_state.scraping_process = process
-        st.session_state.scraping_logs = []
-        st.write("Processus de scraping démarré.")
-    else:
-        st.write("Échec du démarrage du scraping.")
+    try:
+        process = execute_command_background(["python3", "runner_categories.py"])
+        if process:
+            st.session_state.scraping_process = process
+            st.session_state.scraping_logs = []
+            st.write("Processus de scraping démarré.")
+        else:
+            st.write("Échec du démarrage du scraping.")
+    except Exception as e:
+        st.write(f"Erreur lors du démarrage du processus : {e}")
 
 
 def monitor_scraping():
@@ -105,12 +108,19 @@ def stop_scraping():
     """Arrête le processus de scraping."""
     process = st.session_state.scraping_process
     if process and process.poll() is None:  # Vérifie si le processus est actif
-        process.terminate()  # Envoie un signal pour arrêter le processus proprement
-        process.wait()  # Attend la fin du processus
-        st.write("Scraping arrêté.")
+        try:
+            process.terminate()  # Envoie un signal pour arrêter le processus proprement
+            process.wait(timeout=5)  # Attend la fin du processus, avec un délai de sécurité
+            st.write("Scraping arrêté.")
+        except subprocess.TimeoutExpired:
+            st.write("Le processus a mis trop de temps à se terminer, forçage de l'arrêt.")
+            process.kill()  # Si le processus ne se termine pas, on force l'arrêt
+        except Exception as e:
+            st.write(f"Erreur lors de l'arrêt du processus : {e}")
     else:
         st.write("Aucun processus actif à arrêter.")
-    st.session_state.scraping_process = None  # Réinitialise l'état
+
+    st.session_state.scraping_process = None  # Réinitialise l'état du processus
 
 
 if __name__ == "__main__":

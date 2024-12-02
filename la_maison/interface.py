@@ -1,6 +1,6 @@
 import streamlit as st
-from StartScraping import start_scraping, stop_scraping, monitor_scraping
-
+from StartScraping import start_scraping_categories,start_scraping_produit, stop_scraping, monitor_scraping
+from ReadBdd import get_table_produit
 
 def run_scraping():
     """Affiche les éléments de démarrage et d'arrêt du scraping"""
@@ -16,9 +16,15 @@ def run_scraping():
     if "scraping_status" not in st.session_state:
         st.session_state.scraping_status = False  # Valeur par défaut pour scraping_status
 
-    if st.button("Démarrer le scraping"):
+    if st.button("Démarrer le scraping Catégorie"):
         if st.session_state.scraping_process is None:
-            start_scraping()
+            start_scraping_categories()
+            # Affichage des logs dynamiques du scraping
+        else:
+            st.write("Un processus de scraping est déjà en cours.")
+    if st.button("Démarrer le scraping Produits"):
+        if st.session_state.scraping_process is None:
+            start_scraping_produit()
             # Affichage des logs dynamiques du scraping
         else:
             st.write("Un processus de scraping est déjà en cours.")
@@ -38,7 +44,13 @@ def scraping_on_off(boolean_choice: bool):
 
 def switch_interface(interface: str):
     """Change l'interface sans redémarrer toute l'application"""
-    st.session_state.focus_interface = interface
+
+    if st.session_state.scraping_process is None:
+        st.session_state.focus_interface = interface
+        st.rerun()
+    # Affichage des logs dynamiques du scraping
+    else:
+        st.write("Un processus de scraping est en cours veuilliez l'arrêter ou attendre la fin avant")
 
 def switch_accueil():
     switch_interface("accueil")
@@ -90,7 +102,7 @@ def interface_acceuil():
 
 def interface_data_base():
     """Affiche l'interface pour la base de données"""
-    st.write("Ici la future base de données")
+    get_table_produit()
     button_switch_accueil()
 
 def interface():

@@ -28,7 +28,7 @@ class CategoriesSpider(scrapy.Spider):
         id_sous_categorie = 1
         id_page_list = 1
 
-        for cat in categories : 
+        for cat in categories:
 
             dict_cat = {
                 "nom_cat" : cat.css('a span::text').get(),

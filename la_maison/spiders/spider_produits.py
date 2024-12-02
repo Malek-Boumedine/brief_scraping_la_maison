@@ -35,7 +35,7 @@ class ProduitsSpider(scrapy.Spider):
         liste_produits = response.css('ol.products.list')
         produits = liste_produits.css('li.item.product')
         
-        for p in produits : 
+        for p in produits:
             if p.css('div div strong a::text').get():
                 url_produit = p.css('div a::attr(href)').get()
                 yield response.follow(url_produit, callback=self.parse_page_produit,meta={"url_produit" : url_produit, "identifiant": response.meta["identifiant"]})

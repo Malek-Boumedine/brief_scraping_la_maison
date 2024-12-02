@@ -63,6 +63,7 @@ ROBOTSTXT_OBEY = True
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
+# Number  in  pipeline == Priority (priority number inferior)
 ITEM_PIPELINES = {
    "la_maison.pipelines.LaMaisonPipeline": 300,
 }

@@ -8,6 +8,7 @@
 from itemadapter import ItemAdapter
 import sqlite3
 
+
 class LaMaisonPipeline:
     def __init__(self):
         self.connexion = sqlite3.connect("laMaison.db")
@@ -20,8 +21,8 @@ class LaMaisonPipeline:
             "nom" VARCHAR(200) NOT NULL,
             "url" TEXT NOT NULL
             )""")
-        
-    def creer_table_sous_categories(self) : 
+
+    def creer_table_sous_categories(self):
         self.curseur.execute("""CREATE TABLE IF NOT EXISTS sous_categories(
             "id" INT PRIMARY KEY,
             "nom" VARCHAR(200) NOT NULL,
@@ -29,8 +30,8 @@ class LaMaisonPipeline:
             "id_parent" INT NOT NULL,
             FOREIGN KEY (id_parent) REFERENCES categorie(id)
             )""")
-        
-    def creer_table_page_list(self) : 
+
+    def creer_table_page_list(self):
         self.curseur.execute("""CREATE TABLE IF NOT EXISTS page_list(
             "id" INT PRIMARY KEY,
             "nom" VARCHAR(200) NOT NULL,
@@ -38,14 +39,14 @@ class LaMaisonPipeline:
             "id_parent" INT NOT NULL,
             FOREIGN KEY (id_parent) REFERENCES sous_categories(id)
             )""")
-        
-    def creer_table_marque(self) : 
+
+    def creer_table_marque(self):
         self.curseur.execute("""CREATE TABLE IF NOT EXISTS marque(
             "id" INT PRIMARY KEY,
             "nom" VARCHAR(250) NOT NULL,
             )""")
-        
-    # def creer_table_produits(self) : 
+
+    # def creer_table_produits(self):
     #     self.curseur.execute("""CREATE TABLE IF NOT EXISTS produits(
     #         "id_produit" INT PRIMARY KEY,
     #         "nom_produit" VARCHAR(250) NOT NULL,
@@ -61,8 +62,8 @@ class LaMaisonPipeline:
     #         FOREIGN KEY (id_marque) REFERENCES marque(id)
     #         FOREIGN KEY (id_categorie) REFERENCES page_list(id)
     #         )""")
-    
-    def creer_table_produits(self) : 
+
+    def creer_table_produits(self):
         self.curseur.execute("""CREATE TABLE IF NOT EXISTS produits(
             "id_produit" INT PRIMARY KEY,
             "nom_produit" VARCHAR(250) NOT NULL,
@@ -105,14 +106,33 @@ class LaMaisonPipeline:
                             (item["identifiant"], item["nom_categorie"], item["url"]))
             self.connexion.commit()
 
-        elif item["type_cat"] == "S_CAT" : 
-            self.curseur.execute("""INSERT OR IGNORE INTO sous_categories VALUES(?, ?, ?, ?)""",
-                            (item["identifiant"], item["nom_categorie"], item["url"], item["id_parent"]))                            
-            self.connexion.commit()
-            
-        elif item["type_cat"] == "PAGE_LIST" : 
-            self.curseur.execute("""INSERT OR IGNORE INTO page_list VALUES(?, ?, ?, ?)""",
-                            (item["identifiant"], item["nom_categorie"], item["url"], item["id_parent"]))
+        elif item["type_cat"] == "CAT":
+            self.curseur.execute("""
+                                 INSERT OR IGNORE INTO categories VALUES(?, ?,
+                                                                         ?)""",
+                                 (item["identifiant"],
+                                  item["nom_categorie"],
+                                  item["url"]))
             self.connexion.commit()
 
-        return item        
+        elif item["type_cat"] == "S_CAT":
+            self.curseur.execute("""
+                                 INSERT OR IGNORE INTO sous_categories
+                                 VALUES(?, ?, ?, ?)""",
+                                 (item["identifiant"],
+                                  item["nom_categorie"],
+                                  item["url"],
+                                  item["id_parent"]))
+            self.connexion.commit()
+
+        elif item["type_cat"] == "PAGE_LIST":
+            self.curseur.execute("""
+                                 INSERT OR IGNORE INTO page_list
+                                 VALUES(?, ?,?, ?)""",
+                                 (item["identifiant"],
+                                  item["nom_categorie"],
+                                  item["url"],
+                                  item["id_parent"]))
+            self.connexion.commit()
+
+        return item

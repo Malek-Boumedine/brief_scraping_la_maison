@@ -1,8 +1,10 @@
-la_maison/spiders/__pycache__*
-la_maison/__pycache__*
-*/__pycache__
-*/*/__pycache__
 la_maison/spiders/spider_produitsTESTTT.py
+la_maison/spiders/categories.*
 la_maison/produits.csv
 la_maison/categories.csv
 la_maison/laMaison.db
+# Ignorer tous les dossiers __pycache__, quelle que soit leur profondeur
+**/__pycache__/
+
+# Ignorer l'environnement virtuel
+.venv/

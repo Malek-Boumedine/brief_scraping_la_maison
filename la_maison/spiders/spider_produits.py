@@ -29,7 +29,7 @@ class ProduitsSpider(scrapy.Spider):
             donnees_categories = csv.DictReader(fichier, delimiter=",")
             for ligne in donnees_categories :
                 if ligne["type_cat"] == "PAGE_LIST" :
-                    yield scrapy.Request(url=ligne["url"],callback=self.parse_product)
+                    yield scrapy.Request(url=ligne["url"],callback=self.parse_product, meta={"identifiant": ligne["identifiant"]})
 
     def parse_product(self, response):
         liste_produits = response.css('ol.products.list')
@@ -38,7 +38,7 @@ class ProduitsSpider(scrapy.Spider):
         for p in produits : 
             if p.css('div div strong a::text').get():
                 url_produit = p.css('div a::attr(href)').get()
-                yield response.follow(url_produit, callback=self.parse_page_produit, meta={"url_produit" : url_produit,})
+                yield response.follow(url_produit, callback=self.parse_page_produit,meta={"url_produit" : url_produit, "identifiant": response.meta["identifiant"]})
                 
         bouton_suivant = response.css('a.action.next::attr(href)').get()
         if bouton_suivant :
@@ -87,6 +87,7 @@ class ProduitsSpider(scrapy.Spider):
             categorie = categorie,
             sous_categorie = sous_categorie,
             sous_sous_categorie = sous_sous_categorie,
+            id_sous_sous_categorie = response.meta["identifiant"],
             reference = reference,
             code_article = code_article,
             gencod = gencod,

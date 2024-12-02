@@ -1,8 +1,8 @@
 la_maison/spiders/__pycache__*
 la_maison/__pycache__*
-la_maison/spiders/spider_produitsTESTTT.py
-la_maison/produits.*
-la_maison/categories.*
-la_maison/spiders/categories.*
 */__pycache__
 */*/__pycache__
+la_maison/spiders/spider_produitsTESTTT.py
+la_maison/produits.csv
+la_maison/categories.csv
+la_maison/laMaison.db

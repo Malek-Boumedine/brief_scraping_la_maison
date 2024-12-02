@@ -1,7 +1,10 @@
 import scrapy
-from items import ProductItem
+from la_maison.items import ProductItem
 import csv
 import re
+from typing import Generator
+
+
 
 class ProduitsSpider(scrapy.Spider):
     name = "spider_produits"
@@ -23,7 +26,19 @@ class ProduitsSpider(scrapy.Spider):
         ]
     }
     
-    def start_requests(self):
+    
+    def start_requests(self) -> Generator[scrapy.Request, None, None] :
+        """
+        Génère des requêtes de démarrage pour récupérer des pages de produits à partir d'un fichier CSV.
+
+        Cette méthode lit un fichier CSV contenant des catégories et envoie des requêtes HTTP pour les lignes où le type de catégorie est 'PAGE_LIST'. Chaque requête est associée à un identifiant pour un traitement ultérieur.
+
+        Args:
+            self: L'instance de la classe.
+
+        Returns:
+            Un générateur de requêtes Scrapy pour les pages de produits.
+        """
         
         with open("categories.csv", newline="") as fichier:
             donnees_categories = csv.DictReader(fichier, delimiter=",")
@@ -31,7 +46,21 @@ class ProduitsSpider(scrapy.Spider):
                 if ligne["type_cat"] == "PAGE_LIST" :
                     yield scrapy.Request(url=ligne["url"],callback=self.parse_product, meta={"identifiant": ligne["identifiant"]})
 
-    def parse_product(self, response):
+
+    def parse_product(self, response) -> Generator[scrapy.Request, None, None] :
+        """
+        Analyse la réponse d'une page de produits et extrait les informations des produits.
+
+        Cette méthode récupère une liste de produits à partir de la réponse d'une page, en suivant les liens vers les pages de détails des produits. Elle gère également la pagination en suivant le lien vers la page suivante si disponible.
+
+        Args:
+            self: L'instance de la classe.
+            response: La réponse de la requête contenant les informations sur les produits.
+
+        Returns:
+            Un générateur de requêtes Scrapy pour les pages de détails des produits et pour la pagination.
+        """
+
         liste_produits = response.css('ol.products.list')
         produits = liste_produits.css('li.item.product')
         
@@ -46,7 +75,20 @@ class ProduitsSpider(scrapy.Spider):
             yield scrapy.Request(url = url_suivante, callback = self.parse_product, meta = response.meta)
 
         
-    def parse_page_produit(self, response):
+    def parse_page_produit(self, response) -> Generator[ProductItem, None, None] :
+        """
+        Analyse la page d'un produit et extrait ses informations détaillées.
+
+        Cette méthode récupère divers attributs d'un produit à partir de la réponse d'une page, y compris le nom, le prix, l'identifiant, les références, et les catégories associées. Elle crée ensuite un objet `ProductItem` contenant toutes ces informations pour un traitement ultérieur.
+
+        Args:
+            self: L'instance de la classe.
+            response: La réponse de la requête contenant les détails du produit.
+
+        Returns:
+            Un générateur d'objets `ProductItem` avec les informations extraites du produit.
+        """
+
         nom_produit = response.css('h1.page-title span::text').get()
         prix_produit = response.css('div.product-info-price div span span::attr(data-price-amount)').get()
         id_produit = response.css('div.product-info-price div::attr(data-product-id)').get()
@@ -82,7 +124,7 @@ class ProduitsSpider(scrapy.Spider):
             nom_produit = nom_produit,
             marque_produit = marque_produit,
             prix_produit = prix_produit,
-            en_promotion = "Oui"if product_promo else "Non",
+            en_promotion = True if product_promo else False,
             date_fin_promo = date_fin_promo,
             categorie = categorie,
             sous_categorie = sous_categorie,

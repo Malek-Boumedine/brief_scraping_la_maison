@@ -57,8 +57,8 @@ la_maison/
 
 Lancer le scraping :
 ```bash
-scrapy crawl spider_categories.py
-scrapy crawl spider_produits.py
+scrapy crawl spider/spider_categories.py
+scrapy crawl spider/spider_produits.py
 ```
 ### On peut aussi lancer le runner pour chaque spider
 

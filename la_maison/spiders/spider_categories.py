@@ -134,7 +134,7 @@ class CategoriesSpider(scrapy.Spider) :
         yield categorieItem(                    # enregistrer les infos des bonnes affaires
             identifiant = id_bonnes_affaires,
             nom_categorie = nom_bonnes_affaires,
-            type_cat = nom_bonnes_affaires,
+            type_cat = "PAGE_LIST",
             url = url_bonnes_affaires,
             id_parent = None
         )
